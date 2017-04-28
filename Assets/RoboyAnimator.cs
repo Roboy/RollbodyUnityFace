@@ -65,13 +65,12 @@ public class RoboyAnimator : MonoBehaviour
             UnityEngine.Debug.LogWarning(e.Message + e.StackTrace);
         }
 
-//        if (Random.value < 0.001f)
-//            anim.SetTrigger("smileblink");
-//        if (Random.value < 0.001f)
-//        {
-//            anim.SetTrigger("shy");
-//        }
-//        if (Random.value < 0.002f)
-//           anim.SetTrigger("blink");
+        //if (Random.value < 0.001f)
+        //    anim.SetTrigger("smileblink");
+        //if (Random.value < 0.001f)
+        //{
+        //    anim.SetTrigger("shy");
+        //}
+        //   anim.SetTrigger("blink");
     }
 }
