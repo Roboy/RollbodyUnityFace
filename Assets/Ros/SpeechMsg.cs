@@ -17,7 +17,7 @@ namespace Ros
 
 		public string MessageType ()
 		{
-			return "speech_synthesis_msgs/SpeechSynthMsg";
+			return "roboy_communication_cognition/SpeechSynthesis";
 		}
 	}
 }
