@@ -68,7 +68,7 @@ public class RoboyAnimator : MonoBehaviour
                 node = new Node(new StreamReader(tcp.GetStream()), new StreamWriter(tcp.GetStream()));
                 sub1 = node.Subscribe<SpeechMsg>("/roboy/cognition/speech/synthesis",
                                                 msg => anim.SetBool("talking", !msg.phoneme.Equals("sil")));
-                sub2 = node.Subscribe<EmotionMsg>("/roboy/control/face/emotion",
+                sub2 = node.Subscribe<EmotionMsg>("/roboy/cognition/face/emotion",
                                                 msg => anim.SetTrigger(msg.emotion));
                 pub = node.Advertise<Float64Msg>("/bla");
             }
