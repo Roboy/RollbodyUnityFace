@@ -85,6 +85,11 @@ public class RoboyAnimator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
             anim.SetTrigger("lookright");
 
+        if (Input.GetKeyDown(KeyCode.S))
+            anim.SetTrigger("shy");
+        if (Input.GetKeyDown(KeyCode.B))
+            anim.SetTrigger("blink");
+
         if (Random.value < 0.0001f)
             anim.SetTrigger("blink");
         //if (Random.value < 0.001f)
