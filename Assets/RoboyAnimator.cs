@@ -1,19 +1,27 @@
-﻿using System.IO;
+﻿using Ros;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using UnityEngine;
-using Ros;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Animator))]
 public class RoboyAnimator : MonoBehaviour
 {
 
     public Vector3 targetHeadEulerAngle;
+    public List<Sprite> icons;
+    public SpriteRenderer glasses;
+    public Image emojiRight;
+    public Image emojiLeft;
     Animator anim;
     Node node;
     Subscriber sub1;
     Subscriber sub2;
-    Publisher<Float64Msg> pub;
+    Publisher<EmotionMsg> pub;
     TcpClient tcp;
+    bool offlineToggle = false;
+    int errorWait;
     string ROS_MASTER_IP;
 
     // Use this for initialization
@@ -39,63 +47,140 @@ public class RoboyAnimator : MonoBehaviour
 
     private void OnDestroy()
     {
-        tcp.Close();
+        if(tcp != null)
+            tcp.Close();
     }
 
     // Update is called once per frame
     void Update()
     {
-   
-        try
+
+        //*
+        if (!offlineToggle && errorWait <= 0)
         {
-            if (!IsAlive(tcp))
+            try
             {
-                UnityEngine.Debug.LogWarning("Connection to the TCP ROS bridge with IP " + ROS_MASTER_IP + " failed, retrying...");
-                if (tcp != null) tcp.Close();
-                                
-                if (System.Environment.GetEnvironmentVariable("ROS_MASTER_URI") == null)
+                if (!IsAlive(tcp))
                 {
-                    UnityEngine.Debug.LogWarning("Environmental variable ROS_MASTER_URI is not set. Assuming ROS is running on localhost.");
-                    ROS_MASTER_IP = "127.0.0.1";
+                    UnityEngine.Debug.LogWarning("Connection to the TCP ROS bridge with IP " + ROS_MASTER_IP + " failed, retrying...");
+                    if (tcp != null) tcp.Close();
+
+                    if (Application.platform == RuntimePlatform.Android)
+                    {
+                        UnityEngine.Debug.LogWarning("Running on Android, assuming ROS_MASTER is on Magic IP (10.42.0.1)");
+                        ROS_MASTER_IP = "10.42.0.225";
+                    }
+                    else if (System.Environment.GetEnvironmentVariable("ROS_MASTER_URI") == null)
+                    {
+                        UnityEngine.Debug.LogWarning("Environmental variable ROS_MASTER_URI is not set. Assuming ROS is running on localhost.");
+                        ROS_MASTER_IP = "127.0.0.1";
+                    }
+                    else
+                    {
+                        System.Uri ROS_MASTER_URI = new System.Uri(System.Environment.GetEnvironmentVariable("ROS_MASTER_URI"));
+                        ROS_MASTER_IP = ROS_MASTER_URI.DnsSafeHost;
+                    }
+                    //ROS_MASTER_IP = "192.168.0.103";
+                    tcp = new TcpClient(ROS_MASTER_IP, 9091);
+                    node = new Node(new StreamReader(tcp.GetStream()), new StreamWriter(tcp.GetStream()));
+                    sub1 = node.Subscribe<SpeechMsg>("/roboy/cognition/speech/synthesis",
+                                                    msg => anim.SetBool("talking", !msg.phoneme.Equals("sil")));
+                    sub2 = node.Subscribe<EmotionMsg>("/roboy/cognition/face/emotion",
+                                                    msg => SetEmotion(msg));
+                    pub = node.Advertise<EmotionMsg>("/bla");
+                    pub.Publish(new EmotionMsg { emotion = "just_started" });
                 }
-                else
-                {
-                    System.Uri ROS_MASTER_URI = new System.Uri(System.Environment.GetEnvironmentVariable("ROS_MASTER_URI"));
-                    ROS_MASTER_IP = ROS_MASTER_URI.DnsSafeHost;
-                }
-                                
-                tcp = new TcpClient(ROS_MASTER_IP, 9091);
-                node = new Node(new StreamReader(tcp.GetStream()), new StreamWriter(tcp.GetStream()));
-                sub1 = node.Subscribe<SpeechMsg>("/roboy/cognition/speech/synthesis",
-                                                msg => anim.SetBool("talking", !msg.phoneme.Equals("sil")));
-                sub2 = node.Subscribe<EmotionMsg>("/roboy/cognition/face/emotion",
-                                                msg => anim.SetTrigger(msg.emotion));
-                pub = node.Advertise<Float64Msg>("/bla");
+                node.SpinOnce();
             }
-            pub.Publish(new Float64Msg { data = 1.0 });
-            node.SpinOnce();
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogWarning(e.Message + e.StackTrace);
+                errorWait = 20;
+            }//*/
         }
-        catch (System.Exception e)
+        if (errorWait > 0) errorWait--;
+
+        if (Input.GetKeyDown(KeyCode.O))
         {
-            UnityEngine.Debug.LogWarning(e.Message + e.StackTrace);
+            offlineToggle = !offlineToggle;
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            SetEmotion("url:https://upload.wikimedia.org/wikipedia/commons/7/7e/Cute-Ball-Favorites-icon.png");
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            SetEmotion("img:instagram");
         }
         
-        if(Input.GetKeyDown(KeyCode.L))
-            anim.SetTrigger("lookleft");
+        if (Input.GetKeyDown(KeyCode.L))
+            SetEmotion("lookleft");
         if (Input.GetKeyDown(KeyCode.R))
-            anim.SetTrigger("lookright");
+            SetEmotion("lookright");
 
         if (Input.GetKeyDown(KeyCode.S))
-            anim.SetTrigger("shy");
+            SetEmotion("shy");
         if (Input.GetKeyDown(KeyCode.B))
-            anim.SetTrigger("blink");
+            SetEmotion("blink");
+        if (Input.GetKeyDown(KeyCode.K))
+            SetEmotion("kiss");
+        if (Input.GetKeyDown(KeyCode.K))
+            SetEmotion("hearts");
+        if (Input.GetKeyDown(KeyCode.W))
+            SetEmotion("smileblink");
+        if (Input.GetKeyDown(KeyCode.G))
+            SetEmotion("glasseson");
+        if (Input.GetKeyDown(KeyCode.H))
+            SetEmotion("glassesoff");
 
-        if (Random.value < 0.0001f)
+        //anim.SetBool("talking", Input.GetKey(KeyCode.Space));
+
+        if (Random.value < 0.001f)
             anim.SetTrigger("blink");
         //if (Random.value < 0.001f)
         //{
         //    anim.SetTrigger("shy");
         //}
         //   anim.SetTrigger("blink");
+        //*/
     }
+
+    void SetEmotion(EmotionMsg e)
+    {
+        pub.Publish(e);
+        SetEmotion(e.emotion);
+    }
+
+    void SetEmotion(string emotion) {
+        if (emotion == "glasseson")
+            glasses.color = Color.white;
+        else if (emotion == "glassesoff")
+            glasses.color = new Color(1,1,1,0);
+        else if (emotion == "hearts") emotion = "img:Heart";
+        else if (emotion.Contains("img:"))
+        {
+            string emoji = emotion.Substring(4);
+            foreach (Sprite s in icons)
+            {
+                if (s.name == emoji)
+                {
+                    emojiLeft.sprite = s;
+                    emojiRight.sprite = s;
+                    anim.SetTrigger("hearts");
+                    break;
+                }
+            }
+        }
+        else if (emotion.Contains("url:"))
+        {
+            string emoji = emotion.Substring(4);
+            emojiLeft.sprite = IMG2Sprite.LoadNewSprite(emoji);
+            emojiRight.sprite = IMG2Sprite.LoadNewSprite(emoji);
+            anim.SetTrigger("hearts");
+        }
+        else
+            anim.SetTrigger(emotion);
+    }
+
+
 }
