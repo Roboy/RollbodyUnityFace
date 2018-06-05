@@ -20,7 +20,7 @@ public class RoboyAnimator : MonoBehaviour
     Subscriber sub2;
     Publisher<EmotionMsg> pub;
     TcpClient tcp;
-    bool offlineToggle = false;
+    bool offlineToggle = true;
     int errorWait;
     string ROS_MASTER_IP;
 
@@ -110,7 +110,7 @@ public class RoboyAnimator : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            SetEmotion("img:instagram");
+            SetEmotion("img:money");
         }
         
         if (Input.GetKeyDown(KeyCode.L))
