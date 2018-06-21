@@ -14,9 +14,8 @@ public static class IMG2Sprite
 
         // Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
 
-        Sprite NewSprite = new Sprite();
         Texture2D SpriteTexture = LoadTexture(FilePath);
-        NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), PixelsPerUnit, 0, spriteType);
+        Sprite NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), PixelsPerUnit, 0, spriteType);
 
         return NewSprite;
     }
@@ -25,8 +24,7 @@ public static class IMG2Sprite
     {
         // Converts a Texture2D to a sprite, assign this texture to a new sprite and return its reference
 
-        Sprite NewSprite = new Sprite();
-        NewSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0, 0), PixelsPerUnit, 0, spriteType);
+        Sprite NewSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0, 0), PixelsPerUnit, 0, spriteType);
 
         return NewSprite;
     }
