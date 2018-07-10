@@ -74,7 +74,7 @@ public class RoboyAnimator : MonoBehaviour
                     else if (System.Environment.GetEnvironmentVariable("ROS_MASTER_URI") == null)
                     {
                         UnityEngine.Debug.LogWarning("Environmental variable ROS_MASTER_URI is not set. Assuming ROS is running on localhost.");
-                        ROS_MASTER_IP = "192.168.0.106";
+                        ROS_MASTER_IP = "10.183.90.43";
                     }
                     else
                     {
@@ -158,7 +158,7 @@ public class RoboyAnimator : MonoBehaviour
     }
 
     IEnumerator SetEmotionInternal(string emotion) {
-        if (emotion == "cry")
+        if (emotion == "tears")
         {
             anim.SetBool("cryingRoboy", true);
             // pause 2 sec
@@ -167,11 +167,11 @@ public class RoboyAnimator : MonoBehaviour
             // trigger to idle
         }
         if (emotion == "pissed")
-            anim.SetTrigger("rolling_eyes 1");
+            anim.SetTrigger("rolling_eyes");
         if (emotion == "sunglasses")
         {
             anim.SetBool("sunglasses_on", true);
-            yield return new WaitForSeconds(8);
+            yield return new WaitForSeconds(4);
             anim.SetBool("sunglasses_on", false);             
         }
 
