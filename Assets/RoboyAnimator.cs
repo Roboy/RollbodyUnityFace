@@ -166,6 +166,40 @@ public class RoboyAnimator : MonoBehaviour
             anim.SetBool("cryingRoboy", false);
             // trigger to idle
         }
+
+        if (emotion == "tongue")
+            anim.SetTrigger("tongue_out");
+        if (emotion == "happy")
+            anim.SetTrigger("happy2");
+        if (emotion == "angry")
+            anim.SetTrigger("angey_new");
+        if (emotion == "teeth")
+            anim.SetTrigger("happy");
+        if (emotion == "annoyed")
+            anim.SetTrigger("angry");
+        if (emotion == "hypno")
+            anim.SetTrigger("hypno_eyes");
+        if (emotion == "rolling")
+            anim.SetTrigger("rolling");
+        if (emotion == "glasses")
+        {
+            anim.SetBool("specs", true);
+            yield return new WaitForSeconds(8);
+            anim.SetBool("specs", false);
+        }
+        if (emotion == "moustache")
+        {
+            anim.SetBool("moustache", true);
+            yield return new WaitForSeconds(8);
+            anim.SetBool("moustache", false);
+        }
+        if (emotion == "pirate")
+        {
+            anim.SetBool("pirate", true);
+            yield return new WaitForSeconds(8);
+            anim.SetBool("pirate", false);
+        }
+       
         if (emotion == "pissed")
             anim.SetTrigger("rolling_eyes 1");
         if (emotion == "sunglasses")
@@ -174,11 +208,10 @@ public class RoboyAnimator : MonoBehaviour
             yield return new WaitForSeconds(8);
             anim.SetBool("sunglasses_on", false);             
         }
-
         if (emotion == "suprised")
-            anim.SetTrigger("surprise_mit_augen"); 
-
-           
+            anim.SetTrigger("surprise_mit_augen");
+        if (emotion == "hypno_color")
+            anim.SetTrigger("hypno_color");
         if (emotion == "glasseson")
             glasses.color = Color.white;
         else if (emotion == "glassesoff")
