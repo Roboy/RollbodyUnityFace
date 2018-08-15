@@ -24,6 +24,11 @@ public class RoboyAnimator : MonoBehaviour
     bool offlineToggle = true;
     int errorWait;
     string ROS_MASTER_IP;
+    bool pirate = false;
+    bool cryingRoboy = false;
+    bool specs = false;
+    bool sunglasses_on = false;
+    bool moustache = false;
 
     // Use this for initialization
     void Start()
@@ -48,7 +53,7 @@ public class RoboyAnimator : MonoBehaviour
 
     private void OnDestroy()
     {
-        if(tcp != null)
+        if (tcp != null)
             tcp.Close();
     }
 
@@ -68,13 +73,13 @@ public class RoboyAnimator : MonoBehaviour
 
                     if (Application.platform == RuntimePlatform.Android)
                     {
-                        UnityEngine.Debug.LogWarning("Running on Android, assuming ROS_MASTER is on Magic IP (10.42.0.1)");
-                        ROS_MASTER_IP = "10.42.0.225";
+                        UnityEngine.Debug.LogWarning("Running on Android, assuming ROS_MASTER is on Magic IP (192.168.0.105)");
+                        ROS_MASTER_IP = "192.168.0.105";
                     }
                     else if (System.Environment.GetEnvironmentVariable("ROS_MASTER_URI") == null)
                     {
                         UnityEngine.Debug.LogWarning("Environmental variable ROS_MASTER_URI is not set. Assuming ROS is running on localhost.");
-                        ROS_MASTER_IP = "192.168.0.106";
+                        ROS_MASTER_IP = "192.168.0.105";
                     }
                     else
                     {
@@ -113,26 +118,86 @@ public class RoboyAnimator : MonoBehaviour
         {
             SetEmotion("img:money");
         }
-        
+
+        if (Input.GetKeyDown(KeyCode.A))
+            SetEmotion("angry_new");
+        if (Input.GetKeyDown(KeyCode.S))
+            SetEmotion("shy");
+        if (Input.GetKeyDown(KeyCode.K))
+            SetEmotion("kiss");
         if (Input.GetKeyDown(KeyCode.L))
             SetEmotion("lookleft");
         if (Input.GetKeyDown(KeyCode.R))
             SetEmotion("lookright");
-
-        if (Input.GetKeyDown(KeyCode.S))
-            SetEmotion("shy");
         if (Input.GetKeyDown(KeyCode.B))
             SetEmotion("blink");
-        if (Input.GetKeyDown(KeyCode.K))
-            SetEmotion("kiss");
-        if (Input.GetKeyDown(KeyCode.K))
-            SetEmotion("hearts");
+        if (Input.GetKeyDown(KeyCode.D))
+            SetEmotion("tongue_out");
         if (Input.GetKeyDown(KeyCode.W))
             SetEmotion("smileblink");
-        if (Input.GetKeyDown(KeyCode.G))
-            SetEmotion("glasseson");
+        if (Input.GetKeyDown(KeyCode.Q))
+            SetEmotion("happy");
+        if (Input.GetKeyDown(KeyCode.Y))
+            SetEmotion("happy2");
         if (Input.GetKeyDown(KeyCode.H))
-            SetEmotion("glassesoff");
+            SetEmotion("hearts");
+        if (Input.GetKeyDown(KeyCode.N))
+            SetEmotion("angry");
+        if (Input.GetKeyDown(KeyCode.J))
+            SetEmotion("rolling_eyes");
+        if (Input.GetKeyDown(KeyCode.V))
+            SetEmotion("hypno");
+        if (Input.GetKeyDown(KeyCode.U))
+            SetEmotion("hypno_color");
+        if (Input.GetKeyDown(KeyCode.I))
+            SetEmotion("rolling");
+        if (Input.GetKeyDown(KeyCode.Z))
+            SetEmotion("surprise_mit_augen");
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            pirate = !pirate;
+            //anim.SetBool("pirate", true);
+            // yield return new WaitForSeconds(6);
+            //anim.SetBool("pirate", false);
+        }
+        anim.SetBool("pirate", pirate);
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            cryingRoboy = !cryingRoboy;
+        }
+        anim.SetBool("cryingRoboy", cryingRoboy);
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            specs = !specs;
+        }
+        anim.SetBool("specs", specs);
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            moustache = !moustache;
+        }
+        anim.SetBool("moustache", moustache);
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            sunglasses_on = !sunglasses_on;
+        }
+        anim.SetBool("sunglasses_on", sunglasses_on);
+
+
+
+
+
+
+
+
+
+
+
+
 
         //anim.SetBool("talking", Input.GetKey(KeyCode.Space));
 
@@ -152,12 +217,13 @@ public class RoboyAnimator : MonoBehaviour
         SetEmotion(e.emotion);
     }
 
-    void SetEmotion ( string emotion )
+    void SetEmotion(string emotion)
     {
         StartCoroutine(SetEmotionInternal(emotion));
     }
 
-    IEnumerator SetEmotionInternal(string emotion) {
+    IEnumerator SetEmotionInternal(string emotion)
+    {
         if (emotion == "cry")
         {
             anim.SetBool("cryingRoboy", true);
@@ -169,7 +235,7 @@ public class RoboyAnimator : MonoBehaviour
 
         if (emotion == "tongue")
             anim.SetTrigger("tongue_out");
-        if (emotion == "happy")
+        if (emotion == "lucky")
             anim.SetTrigger("happy2");
         if (emotion == "angry")
             anim.SetTrigger("angey_new");
@@ -199,14 +265,14 @@ public class RoboyAnimator : MonoBehaviour
             yield return new WaitForSeconds(8);
             anim.SetBool("pirate", false);
         }
-       
+
         if (emotion == "pissed")
             anim.SetTrigger("rolling_eyes 1");
         if (emotion == "sunglasses")
         {
             anim.SetBool("sunglasses_on", true);
             yield return new WaitForSeconds(8);
-            anim.SetBool("sunglasses_on", false);             
+            anim.SetBool("sunglasses_on", false);
         }
         if (emotion == "suprised")
             anim.SetTrigger("surprise_mit_augen");
@@ -215,7 +281,7 @@ public class RoboyAnimator : MonoBehaviour
         if (emotion == "glasseson")
             glasses.color = Color.white;
         else if (emotion == "glassesoff")
-            glasses.color = new Color(1,1,1,0);
+            glasses.color = new Color(1, 1, 1, 0);
         else if (emotion == "hearts") emotion = "img:Heart";
         else if (emotion.Contains("img:"))
         {
