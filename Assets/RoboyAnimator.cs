@@ -143,8 +143,8 @@ public class RoboyAnimator : MonoBehaviour
             SetEmotion("hearts");
         if (Input.GetKeyDown(KeyCode.N))
             SetEmotion("angry");
-        if (Input.GetKeyDown(KeyCode.J))
-            SetEmotion("rolling_eyes");
+        if (Input.GetKeyDown(KeyCode.X))
+            SetEmotion("pissed");
         if (Input.GetKeyDown(KeyCode.V))
             SetEmotion("hypno");
         if (Input.GetKeyDown(KeyCode.U))
@@ -217,21 +217,23 @@ public class RoboyAnimator : MonoBehaviour
         SetEmotion(e.emotion);
     }
 
-    void SetEmotion(string emotion)
-    {
-        StartCoroutine(SetEmotionInternal(emotion));
-    }
+    //void SetEmotion(string emotion)
+    //{
+      //  StartCoroutine(SetEmotionInternal(emotion));
+    //}
 
-    IEnumerator SetEmotionInternal(string emotion)
+    void SetEmotion(string emotion)
     {
         if (emotion == "cry")
         {
-            anim.SetBool("cryingRoboy", true);
-            // pause 2 sec
-            yield return new WaitForSeconds(6);
-            anim.SetBool("cryingRoboy", false);
-            // trigger to idle
+        cryingRoboy = !cryingRoboy;
         }
+        anim.SetBool("cryingRoboy", cryingRoboy);
+        //anim.SetBool("cryingRoboy", true);
+        // pause 2 sec
+        //yield return new WaitForSeconds(6);
+        //anim.SetBool("cryingRoboy", false);
+        // trigger to idle
 
         if (emotion == "tongue")
             anim.SetTrigger("tongue_out");
@@ -247,37 +249,33 @@ public class RoboyAnimator : MonoBehaviour
             anim.SetTrigger("hypno_eyes");
         if (emotion == "rolling")
             anim.SetTrigger("rolling");
-        if (emotion == "glasses")
-        {
-            anim.SetBool("specs", true);
-            yield return new WaitForSeconds(8);
-            anim.SetBool("specs", false);
-        }
+
+
         if (emotion == "moustache")
         {
-            anim.SetBool("moustache", true);
-            yield return new WaitForSeconds(8);
-            anim.SetBool("moustache", false);
+            moustache = !moustache;
         }
+        anim.SetBool("moustache", moustache);
+
         if (emotion == "pirate")
         {
-            anim.SetBool("pirate", true);
-            yield return new WaitForSeconds(8);
-            anim.SetBool("pirate", false);
+            pirate = !pirate;
         }
+        anim.SetBool("pirate", pirate);
 
         if (emotion == "pissed")
-            anim.SetTrigger("rolling_eyes 1");
-        if (emotion == "sunglasses")
+            anim.SetTrigger("pissed");
+        if (emotion == "sunglasses_on")
         {
-            anim.SetBool("sunglasses_on", true);
-            yield return new WaitForSeconds(8);
-            anim.SetBool("sunglasses_on", false);
+            sunglasses_on = !sunglasses_on;
         }
+        anim.SetBool("sunglasses_on", sunglasses_on);
+
         if (emotion == "suprised")
             anim.SetTrigger("surprise_mit_augen");
         if (emotion == "hypno_color")
             anim.SetTrigger("hypno_color");
+
         if (emotion == "glasseson")
             glasses.color = Color.white;
         else if (emotion == "glassesoff")
@@ -307,6 +305,5 @@ public class RoboyAnimator : MonoBehaviour
         else
             anim.SetTrigger(emotion);
     }
-
-
+   
 }
