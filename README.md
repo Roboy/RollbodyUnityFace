@@ -10,13 +10,15 @@ First step: - Installation of Unity
 For starting with RoboyUnityFace, clone the repository to your device. All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
 
 The connection to ROS (C#) is located in RoboyUnityFace/assets/RoboyAnimator.cs 
-Animations can get triggered from dialog system. 
+For communicating with other systems (ROS, dialogue etc.), the offlineToggle must be set to false. This can be done by pressing the letter O (oh) when the RoboyFace is running. 
+
+Animations can get triggered from dialog system with this code snippet.  
 
 ```
 if (emotion == "tongue")
             anim.SetTrigger("tongue_out");
 ```
-In addition to that, animations can be triggered via the keyboard: 
+In addition to that, animations can be triggered manually via the keyboard by pressing buttons: 
 
 ```
 if (Input.GetKeyDown(KeyCode.Q))
@@ -64,7 +66,7 @@ In addition to the old faces and expressions in Unity, the following faces & emo
 
 tongue out, happy, lucky, Hearts, pissed, angry, irritated, hypno eyes, coloured hypno eyes, rolling eyes, surprised, pirate ,crying Roboy, glasses, moustache, pink sunglasses
 
-Emotions
+## Emotions
 
 In order to start the animations, it is necessary to disconnect from ROS. Otherwise, Unity will show an error message and the play mode cannot be entered. This can be avoided by changing the code in RoboyUnityFace/Assets/RoboyAnimator.cs . The line which must be changed looks like follows. In this line of code, the offline toggle should be set to true.
 
