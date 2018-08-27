@@ -68,9 +68,9 @@ Emotions
 
 In order to start the animations, it is necessary to disconnect from ROS. Otherwise, Unity will show an error message and the play mode cannot be entered. This can be avoided by changing the code in RoboyUnityFace/Assets/RoboyAnimator.cs . The line which must be changed looks like follows. In this line of code, the offline toggle should be set to true.
 
-´´´
+```
 bool offlineToggle = true;
-´´´
+```
 
 The offlineToggle can also be set to true or false by pressing O (oh) on the keyboard. 
 
