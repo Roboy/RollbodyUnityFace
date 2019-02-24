@@ -5,6 +5,8 @@ using System.IO;
 using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.UI;
+using WebSocketSharp;
+using WebSocketSharp.Server;
 
 [RequireComponent(typeof(Animator))]
 public class RoboyAnimator : MonoBehaviour
@@ -15,13 +17,14 @@ public class RoboyAnimator : MonoBehaviour
     public SpriteRenderer glasses;
     public Image emojiRight;
     public Image emojiLeft;
+    public SpriteRenderer black;
     Animator anim;
     Node node;
     Subscriber sub1;
     Subscriber sub2;
     Publisher<EmotionMsg> pub;
     TcpClient tcp;
-    bool offlineToggle = true;
+    bool offlineToggle = false;
     int errorWait;
     string ROS_MASTER_IP;
     bool pirate = false;
@@ -86,7 +89,8 @@ public class RoboyAnimator : MonoBehaviour
                         System.Uri ROS_MASTER_URI = new System.Uri(System.Environment.GetEnvironmentVariable("ROS_MASTER_URI"));
                         ROS_MASTER_IP = ROS_MASTER_URI.DnsSafeHost;
                     }
-                    //ROS_MASTER_IP = "192.168.0.103";
+                    ROS_MASTER_IP = "127.0.0.1";
+                    ROS_MASTER_IP = "192.168.0.105";
                     tcp = new TcpClient(ROS_MASTER_IP, 9091);
                     node = new Node(new StreamReader(tcp.GetStream()), new StreamWriter(tcp.GetStream()));
                     sub1 = node.Subscribe<SpeechMsg>("/roboy/cognition/speech/synthesis",
@@ -104,6 +108,9 @@ public class RoboyAnimator : MonoBehaviour
                 errorWait = 20;
             }//*/
         }
+
+
+
         if (errorWait > 0) errorWait--;
 
         if (Input.GetKeyDown(KeyCode.O))
@@ -154,6 +161,10 @@ public class RoboyAnimator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
             SetEmotion("surprise_mit_augen");
 
+        if (Input.GetKeyDown(KeyCode.Alpha1)){
+        
+            black.enabled = !black.enabled;
+        }
         if (Input.GetKeyDown(KeyCode.P))
         {
             pirate = !pirate;
@@ -276,6 +287,10 @@ public class RoboyAnimator : MonoBehaviour
         if (emotion == "hypno_color")
             anim.SetTrigger("hypno_color");
 
+        if (emotion == "toggleblack")
+        {
+            black.enabled = !black.enabled;
+        }
         if (emotion == "glasseson")
             glasses.color = Color.white;
         else if (emotion == "glassesoff")

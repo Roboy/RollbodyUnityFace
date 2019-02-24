@@ -15,7 +15,7 @@ namespace Ros
 
 		public string MessageType ()
 		{
-			return "roboy_communication_control/Emotion";
+			return "roboy_control_msgs/Emotion";
 		}
 	}
 }
