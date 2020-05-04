@@ -9,6 +9,7 @@ public class SplineDecorator : MonoBehaviour {
 	public int frequency;
 
 	public bool lookForward;
+	public bool reset;
 
 	public Transform[] items;
 
@@ -23,7 +24,7 @@ public class SplineDecorator : MonoBehaviour {
         Transform[] t = gameObject.GetComponentsInChildren<Transform>();
         for (int i = 0; i < t.Length; i++)
         {
-            if (t[i].name.Contains("(Clone)")) { 
+            if (t[i].name.Contains("(Clone)")) {
                 if (!Application.isPlaying)
                     DestroyImmediate(t[i].gameObject);
                 else
@@ -42,7 +43,7 @@ public class SplineDecorator : MonoBehaviour {
 		}
         for (int p = 0, f = 0; f < frequency; f++) {
 			for (int i = 0; i < items.Length; i++, p++) {
-				Transform item = Instantiate(items[i]) as Transform;    
+				Transform item = Instantiate(items[i]) as Transform;
                 instances.Add(item);
                 Vector3 position = spline.GetPoint(p * stepSize);
 				item.transform.localPosition = position;
@@ -50,17 +51,22 @@ public class SplineDecorator : MonoBehaviour {
 					item.transform.LookAt(position + spline.GetDirection(p * stepSize));
 				}
 				item.transform.parent = transform;
-                item.transform.localScale = Vector3.one;
+        //item.transform.localScale = Vector3.one;
 			}
 		}
 	}
 
     private void Update()
     {
+			if(reset){
+				Awake();
+				reset = false;
+			}
         if (frequency <= 0 || items == null || items.Length == 0)
         {
             return;
         }
+				//if(items.Length <= 1) Awake();
         float stepSize = frequency * items.Length;
         if (spline.Loop || stepSize == 1)
         {
@@ -74,12 +80,12 @@ public class SplineDecorator : MonoBehaviour {
         {
             Transform item = instances[p];
             Vector3 position = spline.GetPoint(p * stepSize);
-            item.transform.localPosition = position;
+            item.transform.position = position;
             if (lookForward)
             {
                 item.transform.LookAt(position + spline.GetDirection(p * stepSize));
             }
-            item.transform.parent = transform;
+            //item.transform.parent = transform;
         }
     }
 

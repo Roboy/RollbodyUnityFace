@@ -1,12 +1,21 @@
-﻿using Ros;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using WebSocketSharp;
 using WebSocketSharp.Server;
+
+using System;
+using RosSharp.RosBridgeClient;
+using std_msgs = RosSharp.RosBridgeClient.Messages.Standard;
+using roboy_msgs = RosSharp.RosBridgeClient.Messages.Roboy;
+using std_srvs = RosSharp.RosBridgeClient.Services.Standard;
+using rosapi = RosSharp.RosBridgeClient.Services.RosApi;
+using RosSharp.RosBridgeClient.Protocols;
 
 [RequireComponent(typeof(Animator))]
 public class RoboyAnimator : MonoBehaviour
@@ -19,11 +28,6 @@ public class RoboyAnimator : MonoBehaviour
     public Image emojiLeft;
     public SpriteRenderer black;
     Animator anim;
-    Node node;
-    Subscriber sub1;
-    Subscriber sub2;
-    Publisher<EmotionMsg> pub;
-    TcpClient tcp;
     bool offlineToggle = false;
     int errorWait;
     string ROS_MASTER_IP;
@@ -32,271 +36,231 @@ public class RoboyAnimator : MonoBehaviour
     bool specs = false;
     bool sunglasses_on = false;
     bool moustache = false;
+    bool talking = false;
+    RosSocket rosSocket;
+    string speech_subscription_id, emotion_subscription_id;
+    WebSocketSharpProtocol ws;
+    List<string> emotions = new List<string>();
+    int frame = 0;
 
-    // Use this for initialization
     void Start()
     {
         anim = GetComponent<Animator>();
     }
 
-    bool IsAlive(TcpClient client)
-    {
-        if (client == null) return false;
-        try
-        {
-            bool connected = !(client.Client.Poll(1, SelectMode.SelectRead) && client.Client.Available == 0);
+    void ConnectSubscribe() {
 
-            return connected;
+        string uri = Environment.GetEnvironmentVariable("ROS_WEBSOCKET_URI");
+        if (string.IsNullOrEmpty(uri)) {
+            uri = "ws:192.168.0.110:9090";
         }
-        catch
-        {
-            return false;
-        }
+        ws = new WebSocketSharpProtocol(uri);
+        rosSocket = new RosSocket(ws);
+        speech_subscription_id = rosSocket.Subscribe<roboy_msgs.SpeechSynthesis>("/roboy/cognition/speech/synthesis", SpeechSubscriptionHandler);
+        emotion_subscription_id = rosSocket.Subscribe<roboy_msgs.Emotion>("/roboy/cognition/face/emotion", EmotionSubscriptionHandler);
+        UnityEngine.Debug.Log("Subscribed to: " + speech_subscription_id);
+        UnityEngine.Debug.Log("Subscribed to: " + emotion_subscription_id);
     }
+
+    private void SpeechSubscriptionHandler(roboy_msgs.SpeechSynthesis message)
+        {
+           UnityEngine.Debug.LogWarning("Speech message arrived:" + (message).phoneme);
+           talking = "sil" == (message).phoneme ? false : true;
+        }
+
+    private void EmotionSubscriptionHandler(roboy_msgs.Emotion message)
+    {
+        UnityEngine.Debug.LogWarning("Emotion message arrived:" + (message).emotion);
+        emotions.Add(message.emotion);
+    }
+
 
     private void OnDestroy()
     {
-        if (tcp != null)
-            tcp.Close();
+        rosSocket.Unsubscribe(speech_subscription_id);
+        rosSocket.Unsubscribe(emotion_subscription_id);
+        rosSocket.Close();
+    }
+
+    IEnumerator WaitForConnection()
+    {
+        yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        //*
-        if (!offlineToggle && errorWait <= 0)
+        if (frame % 100 == 0 && false)
         {
-            try
-            {
-                if (!IsAlive(tcp))
-                {
-                    UnityEngine.Debug.LogWarning("Connection to the TCP ROS bridge with IP " + ROS_MASTER_IP + " failed, retrying...");
-                    if (tcp != null) tcp.Close();
 
-                    if (Application.platform == RuntimePlatform.Android)
-                    {
-                        UnityEngine.Debug.LogWarning("Running on Android, assuming ROS_MASTER is on Magic IP (192.168.0.105)");
-                        ROS_MASTER_IP = "192.168.0.105";
-                    }
-                    else if (System.Environment.GetEnvironmentVariable("ROS_MASTER_URI") == null)
-                    {
-                        UnityEngine.Debug.LogWarning("Environmental variable ROS_MASTER_URI is not set. Assuming ROS is running on localhost.");
-                        ROS_MASTER_IP = "192.168.0.105";
-                    }
-                    else
-                    {
-                        System.Uri ROS_MASTER_URI = new System.Uri(System.Environment.GetEnvironmentVariable("ROS_MASTER_URI"));
-                        ROS_MASTER_IP = ROS_MASTER_URI.DnsSafeHost;
-                    }
-                    ROS_MASTER_IP = "127.0.0.1";
-                    ROS_MASTER_IP = "192.168.0.105";
-                    tcp = new TcpClient(ROS_MASTER_IP, 9091);
-                    node = new Node(new StreamReader(tcp.GetStream()), new StreamWriter(tcp.GetStream()));
-                    sub1 = node.Subscribe<SpeechMsg>("/roboy/cognition/speech/synthesis",
-                                                    msg => anim.SetBool("talking", !msg.phoneme.Equals("sil")));
-                    sub2 = node.Subscribe<EmotionMsg>("/roboy/cognition/face/emotion",
-                                                    msg => SetEmotion(msg));
-                    pub = node.Advertise<EmotionMsg>("/bla");
-                    pub.Publish(new EmotionMsg { emotion = "just_started" });
-                }
-                node.SpinOnce();
+            if (rosSocket ==  null) {
+                ConnectSubscribe();
             }
-            catch (System.Exception e)
-            {
-                UnityEngine.Debug.LogWarning(e.Message + e.StackTrace);
-                errorWait = 20;
-            }//*/
+            else {
+                if (!rosSocket.protocol.IsAlive()) {
+                    UnityEngine.Debug.Log("Lost connection. Retrying...");
+
+                    while (!rosSocket.protocol.IsAlive())
+                    {
+                        rosSocket.protocol.Connect();
+                        WaitForConnection();
+                    }
+
+                    rosSocket.Unsubscribe(speech_subscription_id);
+                    rosSocket.Unsubscribe(emotion_subscription_id);
+                    speech_subscription_id = rosSocket.Subscribe<roboy_msgs.SpeechSynthesis>("/roboy/cognition/speech/synthesis", SpeechSubscriptionHandler);
+                    emotion_subscription_id = rosSocket.Subscribe<roboy_msgs.Emotion>("/roboy/cognition/face/emotion", EmotionSubscriptionHandler);
+                    UnityEngine.Debug.Log("Subscribed to: " + speech_subscription_id);
+                    UnityEngine.Debug.Log("Subscribed to: " + emotion_subscription_id);
+
+                }
+            }
+
         }
-
-
-
-        if (errorWait > 0) errorWait--;
+        frame += 1;
 
         if (Input.GetKeyDown(KeyCode.O))
         {
             offlineToggle = !offlineToggle;
         }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            SetEmotion("url:https://upload.wikimedia.org/wikipedia/commons/7/7e/Cute-Ball-Favorites-icon.png");
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            SetEmotion("img:money");
-        }
-
-        if (Input.GetKeyDown(KeyCode.A))
-            SetEmotion("angry_new");
-        if (Input.GetKeyDown(KeyCode.S))
-            SetEmotion("shy");
-        if (Input.GetKeyDown(KeyCode.K))
-            SetEmotion("kiss");
-        if (Input.GetKeyDown(KeyCode.L))
-            SetEmotion("lookleft");
-        if (Input.GetKeyDown(KeyCode.R))
-            SetEmotion("lookright");
-        if (Input.GetKeyDown(KeyCode.B))
-            SetEmotion("blink");
-        if (Input.GetKeyDown(KeyCode.D))
-            SetEmotion("tongue_out");
-        if (Input.GetKeyDown(KeyCode.W))
-            SetEmotion("smileblink");
-        if (Input.GetKeyDown(KeyCode.Q))
-            SetEmotion("happy");
-        if (Input.GetKeyDown(KeyCode.Y))
-            SetEmotion("happy2");
-        if (Input.GetKeyDown(KeyCode.H))
-            SetEmotion("hearts");
-        if (Input.GetKeyDown(KeyCode.N))
-            SetEmotion("angry");
-        if (Input.GetKeyDown(KeyCode.X))
-            SetEmotion("pissed");
-        if (Input.GetKeyDown(KeyCode.V))
-            SetEmotion("hypno");
-        if (Input.GetKeyDown(KeyCode.U))
-            SetEmotion("hypno_color");
-        if (Input.GetKeyDown(KeyCode.I))
-            SetEmotion("rolling");
-        if (Input.GetKeyDown(KeyCode.Z))
-            SetEmotion("surprise_mit_augen");
-
-        if (Input.GetKeyDown(KeyCode.Alpha1)){
-        
-            black.enabled = !black.enabled;
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            pirate = !pirate;
-            //anim.SetBool("pirate", true);
-            // yield return new WaitForSeconds(6);
-            //anim.SetBool("pirate", false);
-        }
+        anim.SetBool("talking", talking);
+        anim.SetBool("cry", cryingRoboy);
+        anim.SetBool("moustache", moustache);
         anim.SetBool("pirate", pirate);
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            cryingRoboy = !cryingRoboy;
-        }
-        anim.SetBool("cryingRoboy", cryingRoboy);
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            specs = !specs;
-        }
+        anim.SetBool("sunglasses_on", sunglasses_on);
         anim.SetBool("specs", specs);
 
-        if (Input.GetKeyDown(KeyCode.M))
+        foreach (string e in emotions)
         {
-            moustache = !moustache;
+            SetEmotion(e);
         }
-        anim.SetBool("moustache", moustache);
+        emotions.Clear();
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            sunglasses_on = !sunglasses_on;
-        }
-        anim.SetBool("sunglasses_on", sunglasses_on);
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //anim.SetBool("talking", Input.GetKey(KeyCode.Space));
-
-        if (Random.value < 0.001f)
+        if (UnityEngine.Random.value < 0.001f)
             anim.SetTrigger("blink");
-        //if (Random.value < 0.001f)
-        //{
-        //    anim.SetTrigger("shy");
-        //}
-        //   anim.SetTrigger("blink");
-        //*/
+
+        KeyboardControls();
+
     }
 
-    void SetEmotion(EmotionMsg e)
+    void KeyboardControls()
     {
-        pub.Publish(e);
-        SetEmotion(e.emotion);
+         if (Input.GetKeyDown(KeyCode.T))
+         {
+             SetEmotion("url:https:upload.wikimedia.org/wikipedia/commons/7/7e/Cute-Ball-Favorites-icon.png");
+         }
+         if (Input.GetKeyDown(KeyCode.E))
+         {
+             SetEmotion("img:money");
+         }
+
+         if (Input.GetKeyDown(KeyCode.A))
+             SetEmotion("angry_new");
+         if (Input.GetKeyDown(KeyCode.S))
+             SetEmotion("shy");
+         if (Input.GetKeyDown(KeyCode.K))
+             SetEmotion("kiss");
+         if (Input.GetKeyDown(KeyCode.L))
+             SetEmotion("lookleft");
+         if (Input.GetKeyDown(KeyCode.R))
+             SetEmotion("lookright");
+         if (Input.GetKeyDown(KeyCode.B))
+             SetEmotion("blink");
+         if (Input.GetKeyDown(KeyCode.D))
+             SetEmotion("tongue_out");
+         if (Input.GetKeyDown(KeyCode.W))
+             SetEmotion("smileblink");
+         if (Input.GetKeyDown(KeyCode.Q))
+             SetEmotion("happy");
+         if (Input.GetKeyDown(KeyCode.Y))
+             SetEmotion("happy2");
+         if (Input.GetKeyDown(KeyCode.H))
+             SetEmotion("hearts");
+         if (Input.GetKeyDown(KeyCode.N))
+             SetEmotion("angry");
+         if (Input.GetKeyDown(KeyCode.X))
+             SetEmotion("pissed");
+         if (Input.GetKeyDown(KeyCode.V))
+             SetEmotion("hypno");
+         if (Input.GetKeyDown(KeyCode.U))
+             SetEmotion("hypno_color");
+         if (Input.GetKeyDown(KeyCode.I))
+             SetEmotion("rolling");
+         if (Input.GetKeyDown(KeyCode.Z))
+             SetEmotion("surprise_mit_augen");
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            black.enabled = !black.enabled;
+        }
+         if (Input.GetKeyDown(KeyCode.P))
+         {
+             pirate = !pirate;
+         }
+
+         if (Input.GetKeyDown(KeyCode.C))
+         {
+             cryingRoboy = !cryingRoboy;
+         }
+
+         if (Input.GetKeyDown(KeyCode.G))
+         {
+             specs = !specs;
+         }
+
+
+         if (Input.GetKeyDown(KeyCode.M))
+         {
+             moustache = !moustache;
+         }
+
+         if (Input.GetKeyDown(KeyCode.F))
+         {
+             sunglasses_on = !sunglasses_on;
+         }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            talking = !talking;
+        }
+        anim.SetBool("talking", Input.GetKey(KeyCode.Space));
     }
 
-    //void SetEmotion(string emotion)
-    //{
-      //  StartCoroutine(SetEmotionInternal(emotion));
-    //}
+
 
     void SetEmotion(string emotion)
     {
-        if (emotion == "cry")
+        switch (emotion)
         {
-        cryingRoboy = !cryingRoboy;
+            case "hearts":
+                emotion = "img:Heart";
+                break;
+            case "cry":
+                cryingRoboy = !cryingRoboy;
+                break;
+            case "moustache":
+                moustache = !moustache;
+                break;
+            case "pirate":
+                pirate = !pirate;
+                break;
+            case "sunglasses_on":
+                sunglasses_on = !sunglasses_on;
+                break;
+            case "toggleblack":
+                black.enabled = !black.enabled;
+                break;
+            case "glasseson":
+                glasses.color = Color.white;
+                break;
+            case "glassesoff":
+                glasses.color = new Color(1, 1, 1, 0);
+                break;
+            default:
+                break;
         }
-        anim.SetBool("cryingRoboy", cryingRoboy);
-        //anim.SetBool("cryingRoboy", true);
-        // pause 2 sec
-        //yield return new WaitForSeconds(6);
-        //anim.SetBool("cryingRoboy", false);
-        // trigger to idle
 
-        if (emotion == "tongue")
-            anim.SetTrigger("tongue_out");
-        if (emotion == "lucky")
-            anim.SetTrigger("happy2");
-        if (emotion == "angry")
-            anim.SetTrigger("angey_new");
-        if (emotion == "teeth")
-            anim.SetTrigger("happy");
-        if (emotion == "annoyed")
-            anim.SetTrigger("angry");
-        if (emotion == "hypno")
-            anim.SetTrigger("hypno_eyes");
-        if (emotion == "rolling")
-            anim.SetTrigger("rolling");
-
-
-        if (emotion == "moustache")
-        {
-            moustache = !moustache;
-        }
-        anim.SetBool("moustache", moustache);
-
-        if (emotion == "pirate")
-        {
-            pirate = !pirate;
-        }
-        anim.SetBool("pirate", pirate);
-
-        if (emotion == "pissed")
-            anim.SetTrigger("pissed");
-        if (emotion == "sunglasses_on")
-        {
-            sunglasses_on = !sunglasses_on;
-        }
-        anim.SetBool("sunglasses_on", sunglasses_on);
-
-        if (emotion == "suprised")
-            anim.SetTrigger("surprise_mit_augen");
-        if (emotion == "hypno_color")
-            anim.SetTrigger("hypno_color");
-
-        if (emotion == "toggleblack")
-        {
-            black.enabled = !black.enabled;
-        }
-        if (emotion == "glasseson")
-            glasses.color = Color.white;
-        else if (emotion == "glassesoff")
-            glasses.color = new Color(1, 1, 1, 0);
-        else if (emotion == "hearts") emotion = "img:Heart";
-        else if (emotion.Contains("img:"))
+        if (emotion.Contains("img:"))
         {
             string emoji = emotion.Substring(4);
             foreach (Sprite s in icons)
@@ -320,5 +284,5 @@ public class RoboyAnimator : MonoBehaviour
         else
             anim.SetTrigger(emotion);
     }
-   
+
 }

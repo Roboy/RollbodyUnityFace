@@ -22,7 +22,7 @@ public class KeyBoardMover : MonoBehaviour {
         string outString;
         Vector3 outVector3 = new Vector3();
         string[] splitString;
-        
+
         // Trim extranious parenthesis
 
         outString = sourceString.Substring(1, sourceString.Length - 2);
@@ -42,14 +42,15 @@ public class KeyBoardMover : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        PlayerPrefs.DeleteAll();
         transform.position = startOffset;
         transform.localScale = startScale;
         try
         {
-            Debug.Log("Start:"+PlayerPrefs.GetString(saveName + "_start"));
-            Debug.Log("Scale:"+PlayerPrefs.GetString(saveName + "_scale"));
-            Vector3 spos = ParseVector3(PlayerPrefs.GetString(saveName + "_start"));
-            Vector3 sscale = ParseVector3(PlayerPrefs.GetString(saveName + "_scale"));
+            Debug.Log("Start:"+PlayerPrefs.GetString(transform.name + "_start"));
+            Debug.Log("Scale:"+PlayerPrefs.GetString(transform.name + "_scale"));
+            Vector3 spos = ParseVector3(PlayerPrefs.GetString(transform.name + "_start"));
+            Vector3 sscale = ParseVector3(PlayerPrefs.GetString(transform.name + "_scale"));
             transform.position = spos;
             transform.localScale = sscale;
             Debug.Log("loaded:"+ transform.name + " startOffset" + spos + " localScale:" + sscale);
@@ -100,8 +101,8 @@ public class KeyBoardMover : MonoBehaviour {
         }
         if (changed)
         {
-            PlayerPrefs.SetString(saveName + "_start", transform.position.ToString());
-            PlayerPrefs.SetString(saveName + "_scale", transform.localScale.ToString());
+            PlayerPrefs.SetString(transform.name + "_start", transform.position.ToString());
+            PlayerPrefs.SetString(transform.name + "_scale", transform.localScale.ToString());
             PlayerPrefs.Save();
             Debug.Log("saved!");
         }
