@@ -52,7 +52,7 @@ public class RoboyAnimator : MonoBehaviour
 
         string uri = Environment.GetEnvironmentVariable("ROS_WEBSOCKET_URI");
         if (string.IsNullOrEmpty(uri)) {
-            uri = "ws:192.168.0.110:9090";
+            uri = "ws:192.168.2.110:9090";
         }
         ws = new WebSocketSharpProtocol(uri);
         rosSocket = new RosSocket(ws);
@@ -77,9 +77,12 @@ public class RoboyAnimator : MonoBehaviour
 
     private void OnDestroy()
     {
-        rosSocket.Unsubscribe(speech_subscription_id);
-        rosSocket.Unsubscribe(emotion_subscription_id);
-        rosSocket.Close();
+        if (rosSocket != null)
+        {
+            rosSocket.Unsubscribe(speech_subscription_id);
+            rosSocket.Unsubscribe(emotion_subscription_id);
+            rosSocket.Close();
+        }
     }
 
     IEnumerator WaitForConnection()
