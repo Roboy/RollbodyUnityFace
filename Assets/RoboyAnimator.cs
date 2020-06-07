@@ -8,14 +8,9 @@ public class RoboyAnimator : MonoBehaviour
 {
     public Vector3 targetHeadEulerAngle;
     public List<Sprite> icons;
-    public SpriteRenderer glasses;
     public Image emojiRight;
     public Image emojiLeft;
-    public SpriteRenderer black;
-    public GameObject leftEye;
-    public GameObject rightEye;
     Animator anim;
-    public bool offlineToggle;
     bool pirate = false;
     bool cryingRoboy = false;
     bool specs = false;
@@ -37,10 +32,6 @@ public class RoboyAnimator : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            offlineToggle = !offlineToggle;
-        }
         anim.SetBool("talking", talking);
         //anim.SetBool("cry", cryingRoboy);
         //anim.SetBool("moustache", moustache);
@@ -106,11 +97,6 @@ public class RoboyAnimator : MonoBehaviour
             SetEmotion("rolling");
         if (Input.GetKeyDown(KeyCode.Z))
             SetEmotion("surprise_mit_augen");
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            black.enabled = !black.enabled;
-        }
         if (Input.GetKeyDown(KeyCode.P))
         {
             pirate = !pirate;
@@ -137,17 +123,10 @@ public class RoboyAnimator : MonoBehaviour
             sunglasses_on = !sunglasses_on;
         }
 
-        //if (Input.GetKey(KeyCode.Space))
-        //{
-        //    talking = !talking;
-        //}
-        if (offlineToggle)
-            anim.SetBool("talking", Input.GetKey(KeyCode.Space));
-        else
-        {
-            if (Input.GetKey(KeyCode.Space))
-                talking = !talking;
-        }
+        if (Input.GetKeyDown(KeyCode.Space))
+            talking = true;
+        if (Input.GetKeyUp(KeyCode.Space))
+            talking = false;
     }
 
     public void SetEmotion(string emotion)
@@ -168,15 +147,6 @@ public class RoboyAnimator : MonoBehaviour
                 break;
             case "sunglasses_on":
                 sunglasses_on = !sunglasses_on;
-                break;
-            case "toggleblack":
-                black.enabled = !black.enabled;
-                break;
-            case "glasseson":
-                glasses.color = Color.white;
-                break;
-            case "glassesoff":
-                glasses.color = new Color(1, 1, 1, 0);
                 break;
             case "talking":
                 talking = !talking;
