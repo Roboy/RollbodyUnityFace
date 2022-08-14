@@ -26,6 +26,8 @@ if (Input.GetKeyDown(KeyCode.Q))
 
 The following emotions can be triggered via the keyboard:
 
+| Key | Emotion |
+|---|---|
 | S | Shy |
 | E | Money | 
 
