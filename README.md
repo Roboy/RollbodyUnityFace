@@ -4,7 +4,7 @@ Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace
 
 ## Installation of Unity
 
-Use version `2019.3.0f5` of the Unity Editor to avoid compatibility problems.
+Use version [2019.3.0f5](https://unity3d.com/unity/beta/2019.3.0f5) of the Unity Editor to avoid compatibility problems.
 
 For starting with RollbodyUnityFace, clone the repository to your device. All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
 
