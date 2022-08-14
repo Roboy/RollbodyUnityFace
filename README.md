@@ -1,11 +1,8 @@
 # RoboyUnityFace
-Unity animation for Roboy face
-
-## Prerequesites 
 
 Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace).
 
-### Installation of Unity
+## Installation of Unity
 
 Use version `2019.3.0f5` of the Unity Editor to avoid compatibility problems.
 
