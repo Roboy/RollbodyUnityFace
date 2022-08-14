@@ -26,16 +26,16 @@ if (Input.GetKeyDown(KeyCode.Q))
 
 The following emotions can be triggered via the keyboard:
 
-| Key | Emotion |
-|---|---|
-| S | Shy |
-| E | Money | 
-| K | Kiss |
-| L | lookleft | 
-| R | lookright | 
-| B | blink |
-| W | smileblink | 
-| D | tongue out | 
+| Key | Emotion ||
+|---|---||
+| S | Shy ||
+| E | Money || 
+| K | Kiss ||
+| L | lookleft ||
+| R | lookright || 
+| B | blink ||
+| W | smileblink ||
+| D | tongue out ||
 | Q | happy | 
 | Y | lucky | 
 | H | Hearts | 
