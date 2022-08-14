@@ -30,8 +30,27 @@ The following emotions can be triggered via the keyboard:
 |---|---|
 | S | Shy |
 | E | Money | 
-
-K - Kiss, L - lookleft, R - lookright, B - blink, W - smileblink, D - tongue out, Q - happy, Y - lucky, H - Hearts, N - pissed, A - angry, X - irritated , V - hypno eyes, U - coloured hypno eyes, I - rolling eyes, Z - surprised , P - pirate (boolean, key needs to be pressed again to stop animation), C - crying Roboy (boolean, key needs to be pressed again to stop animation), G - glasses (boolean, key needs to be pressed again to stop animation), M - moustache (boolean, key needs to be pressed again to stop animation), F - pink, sunglasses (boolean, key needs to be pressed again to stop animation)
+| K | Kiss |
+| L | lookleft | 
+| R | lookright | 
+| B | blink |
+| W | smileblink | 
+| D | tongue out | 
+| Q | happy | 
+| Y | lucky | 
+| H | Hearts | 
+| N | pissed | 
+| A | angry | 
+| X | irritated |
+| V | hypno eyes | 
+| U | coloured hypno eyes | 
+| I | rolling eyes | 
+| Z | surprised | 
+| P | pirate (boolean, key needs to be pressed again to stop animation) | 
+| C | crying Roboy (boolean, key needs to be pressed again to stop animation) | 
+| G | glasses (boolean, key needs to be pressed again to stop animation) | 
+| M | moustache (boolean, key needs to be pressed again to stop animation) | 
+| F | pink, sunglasses (boolean, key needs to be pressed again to stop animation) |
 
 
 ## How to get started? How to get animations running in Unity? 
