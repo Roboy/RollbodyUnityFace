@@ -1,13 +1,13 @@
 # RoboyUnityFace
 Unity animation for Roboy face
 
-## 1. Prerequesites 
+## Prerequesites 
 
-Roboy's facial expressions are animated in Unity. The corresponding repository is in https://github.com/Roboy/RoboyUnityFace
+Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace).
 
-First step: - Installation of Unity
+### Installation of Unity
 
-For starting with RoboyUnityFace, clone the repository to your device. All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
+For starting with RollbodyUnityFace, clone the repository to your device. All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
 
 The connection to ROS (C#) is located in RoboyUnityFace/assets/RoboyAnimator.cs 
 For communicating with other systems (ROS, dialogue etc.), the offlineToggle must be set to false. This can be done by pressing the letter O  when RoboyFace is running. 
