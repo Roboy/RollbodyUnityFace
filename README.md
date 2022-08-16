@@ -87,4 +87,4 @@ Additional faces could be added. Useful tutorials for starting with Unity can be
 
 ## References
 
-[ROS2-for-Unity](https://github.com/RobotecAI/ros2cs)
+The asset [Ros2ForUnity_UbuntuGalactic.unitypackage](https://github.com/RobotecAI/ros2-for-unity/releases) from [ROS2-for-Unity](https://github.com/RobotecAI/ros2cs) provides an implementation of a ROS2 node in C# that can be added to the scene.
