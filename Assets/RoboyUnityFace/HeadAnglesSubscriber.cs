@@ -22,7 +22,7 @@ public class HeadAnglesSubscriber : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ros2Unity = GetComponent<ROS2UnityComponent>();
+        ros2Unity = GameObject.Find ("ROS2Object").GetComponent<ROS2UnityComponent>();
     }
 
     void subCallback(geometry_msgs.msg.Twist twistMsg) 
