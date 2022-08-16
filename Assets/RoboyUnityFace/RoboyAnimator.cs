@@ -70,7 +70,9 @@ public class RoboyAnimator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K))
             SetEmotion("kiss");
         if (Input.GetKeyDown(KeyCode.L))
-            SetEmotion("lookleft");
+            Debug.Log("Looking down");
+            //SetEmotion("lookleft");
+            //Parameter 'lookleft' does not exist.
         if (Input.GetKeyDown(KeyCode.R))
             SetEmotion("lookright");
         if (Input.GetKeyDown(KeyCode.B))
