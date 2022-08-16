@@ -22,7 +22,7 @@ public class HeadAnglesSubscriber : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ros2Unity = GameObject.Find ("ROS2Object").GetComponent<ROS2UnityComponent>();
+        ros2Unity = GameObject.Find("ROS2Object").GetComponent<ROS2UnityComponent>();
     }
 
     void subCallback(geometry_msgs.msg.Twist twistMsg) 
@@ -31,7 +31,6 @@ public class HeadAnglesSubscriber : MonoBehaviour
         yaw = 0.0F;
         roll = 0.0F;
         Debug.Log("Unity listener heard: [" + pitch.ToString() + "]");
-        transform.eulerAngles = new Vector3(pitch, yaw, roll);
     }
 
     // Update is called once per frame
@@ -44,6 +43,8 @@ public class HeadAnglesSubscriber : MonoBehaviour
               "headAngles", msg => subCallback(msg)
               );
         }
+        // Unity requires the "transform to be set in the main thread" -> not possible in the callback
+        transform.eulerAngles = new Vector3(pitch, yaw, roll);
     }
 }
 
