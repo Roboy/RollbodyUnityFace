@@ -1,13 +1,10 @@
 # RoboyUnityFace
-Unity animation for Roboy face
-
-## Prerequesites 
 
 Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace).
 
-### Installation of Unity
+## Installation of Unity
 
-Use version `2019.3.0f5` of the Unity Editor to avoid compatibility problems.
+Use version [2019.3.0f5](https://unity3d.com/unity/beta/2019.3.0f5) of the Unity Editor to avoid compatibility problems.
 
 For starting with RollbodyUnityFace, clone the repository to your device. All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
 
@@ -29,7 +26,31 @@ if (Input.GetKeyDown(KeyCode.Q))
 
 The following emotions can be triggered via the keyboard:
 
-S - Shy, E - Money, K - Kiss, L - lookleft, R - lookright, B - blink, W - smileblink, D - tongue out, Q - happy, Y - lucky, H - Hearts, N - pissed, A - angry, X - irritated , V - hypno eyes, U - coloured hypno eyes, I - rolling eyes, Z - surprised , P - pirate (boolean, key needs to be pressed again to stop animation), C - crying Roboy (boolean, key needs to be pressed again to stop animation), G - glasses (boolean, key needs to be pressed again to stop animation), M - moustache (boolean, key needs to be pressed again to stop animation), F - pink, sunglasses (boolean, key needs to be pressed again to stop animation)
+| Key | Emotion |
+|---|---|
+| S | Shy |
+| E | Money |
+| K | Kiss |
+| L | lookleft |
+| R | lookright |
+| B | blink |
+| W | smileblink |
+| D | tongue out |
+| Q | happy |
+| Y | lucky |
+| H | Hearts |
+| N | pissed | 
+| A | angry |
+| X | irritated |
+| V | hypno eyes |
+| U | coloured hypno eyes |
+| I | rolling eyes | 
+| Z | surprised |
+| P | pirate (boolean, key needs to be pressed again to stop animation) |
+| C | crying Roboy (boolean, key needs to be pressed again to stop animation) |
+| G | glasses (boolean, key needs to be pressed again to stop animation) |
+| M | moustache (boolean, key needs to be pressed again to stop animation) |
+| F | pink, sunglasses (boolean, key needs to be pressed again to stop animation) |
 
 
 ## How to get started? How to get animations running in Unity? 
