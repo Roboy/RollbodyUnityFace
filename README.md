@@ -8,6 +8,14 @@ Use version [2019.3.0f5](https://unity3d.com/unity/beta/2019.3.0f5) of the Unity
 
 Use version 2021.3.8f1 of the Unity Editor to avoid compatibility problems. Clone the repo and open it as a project in Unity. You need [ROS 2 Galactic](https://docs.ros.org/en/galactic/index.html) installed on your machine. This was tested with Ubuntu 20.04.
 
+## Usage
+
+You need to source ROS2 Galactic and run Unity from terminal:
+
+```
+source /opt/ros/galactic/setup.bash
+.$HOME/Unity/Hub/Editor/2021.3.8f1/Editor/Unity -projectPath path/to/RollbodyUnityFace
+```
 ## Project Structure
 
 All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
