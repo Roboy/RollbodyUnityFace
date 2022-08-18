@@ -7,6 +7,7 @@ using System.Threading;
 using UnityEngine;
 using Newtonsoft.Json; 
 using System.Globalization;
+using System.Linq;
 
 // from https://gist.github.com/danielbierwirth/0636650b005834204cb19ef5ae6ccedb
 
@@ -15,12 +16,18 @@ public class TCPClient : MonoBehaviour {
 	#region private members 	
 	private TcpClient socketConnection; 	
 	private Thread clientReceiveThread; 	
+	private Boolean isConnected = false;
 	#endregion  	
 
 	public float headPitch = 0.0F;
     public float headYaw = 0.0F;
     public float headRoll = 0.0F; 
 	public Boolean isTalking = false;
+	// public String headPitch = "0";
+    // public String headYaw = "0";
+    // public String headRoll = "0"; 
+	// public String isTalking = "False";
+	// public String isPresent = "True";
 	public String emotion = ""; 
 
 	// Use this for initialization 	
@@ -31,7 +38,11 @@ public class TCPClient : MonoBehaviour {
 	void Update () {         
 		// if (Input.GetKeyDown(KeyCode.Return)) {             
 		//SendMessage();         
-		// }     
+		// }    
+		if (!isConnected) {
+			System.Threading.Thread.Sleep(1000);
+			ConnectToTcpServer();
+		}
 	}  	
 
 	/// <summary> 	
@@ -51,9 +62,12 @@ public class TCPClient : MonoBehaviour {
 	/// <summary> 	
 	/// Runs in background clientReceiveThread; Listens for incomming data. 	
 	/// </summary>     
-	private void ListenForData() { 		
+	private void ListenForData() { 	
+		// This method must run as fast as possible to avoid broken pipe errors.	
 		try { 			
-			socketConnection = new TcpClient("localhost", 8052);  			
+			socketConnection = new TcpClient("localhost", 8052); 
+			Debug.Log("Successfully connected to the TCP server.");
+			isConnected = true; 		
 			Byte[] bytes = new Byte[1024];             
 			while (true) { 				
 				// Get a stream object for reading 				
@@ -65,20 +79,32 @@ public class TCPClient : MonoBehaviour {
 						Array.Copy(bytes, 0, incommingData, 0, length); 						
 						// Convert byte array to string message. 						
 						string msg = Encoding.ASCII.GetString(incommingData);
-						Debug.Log("server message received as: " + msg); 	
+						//Debug.Log("server message received as: " + msg); 	
 						// msg has format '{"key1": value1, "key2": value2, ...}'
-						var msgDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
-						headRoll = float.Parse(msgDict["headRoll"], CultureInfo.InvariantCulture.NumberFormat);
-						headYaw = float.Parse(msgDict["headYaw"], CultureInfo.InvariantCulture.NumberFormat);
-						headPitch = float.Parse(msgDict["headPitch"], CultureInfo.InvariantCulture.NumberFormat);
+						var msgDict = msg.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries)
+               							  .Select(part => part.Split('='))
+               							  .ToDictionary(split => split[0], split => split[1]);
 						isTalking = bool.Parse(msgDict["isTalking"]);
+						headRoll = float.Parse(msgDict["headRoll"], CultureInfo.InvariantCulture.NumberFormat);
+        				headYaw = float.Parse(msgDict["headYaw"], CultureInfo.InvariantCulture.NumberFormat);
+        				headPitch = float.Parse(msgDict["headPitch"], CultureInfo.InvariantCulture.NumberFormat);
+						// headRoll = msgDict["headRoll"];
+						// headYaw = msgDict["headYaw"];
+						// headPitch = msgDict["headPitch"];
+						// isPresent = msgDict["isPresent"];
+						// isTalking = msgDict["isTalking"];
 						emotion = msgDict["emotion"];
 					} 				
 				} 			
 			}         
 		}         
 		catch (SocketException socketException) {             
-			Debug.Log("Socket exception: " + socketException);         
+			Debug.Log("Socket exception: " + socketException);       
+		}
+		catch (InvalidOperationException invalidOperationException) {
+			Debug.Log("Socket exception: " + invalidOperationException + ". Restarting the client now.");  
+			isConnected = false;
+			clientReceiveThread.Abort();
 		}     
 	}  	
 
