@@ -4,9 +4,7 @@ Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace
 
 ## Installation
 
-Use version [2019.3.0f5](https://unity3d.com/unity/beta/2019.3.0f5) of the Unity Editor to avoid compatibility problems.
-
-Use version 2021.3.8f1 of the Unity Editor to avoid compatibility problems. Clone the repo and open it as a project in Unity. You need [ROS 2 Galactic](https://docs.ros.org/en/galactic/index.html) installed on your machine. This was tested with Ubuntu 20.04.
+Use version 2021.3.8f1 of the Unity Editor to avoid compatibility problems. Clone the repo and open it as a project in Unity. 
 
 ## Usage
 
@@ -18,10 +16,9 @@ source /opt/ros/galactic/setup.bash
 ```
 ## Project Structure
 
-All existing animations are stored in RoboyUnityFace/assets/animations. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in RoboyUnityFace/assets/FaceComponents.
+All existing animations are stored in `RoboyUnityFace/assets/animations`. Corresponding material (pictures to show them on the face, e.g. a moustache or sunglasses) are stored in `RoboyUnityFace/assets/FaceComponents`.
 
-The connection to ROS (C#) is located in RoboyUnityFace/assets/RoboyAnimator.cs 
-For communicating with other systems (ROS, dialogue etc.), the offlineToggle must be set to false. This can be done by pressing the letter O  when RoboyFace is running. 
+The TCP client code is in `RoboyUnityFace/assets/RoboyUnityFace/TCPHeadClient.cs`. The code for controlling the animations is in `RoboyUnityFace/assets/RoboyUnityFace/RoboyAnimator.cs` and the code that controls the head pose is in `RoboyUnityFace/assets/RoboyUnityFace/HeadController.cs`.
 
 Animations can get triggered from dialog system with this code snippet.  
 
@@ -93,6 +90,8 @@ Now, all existing animations can be triggered in Unity by starting the play mode
 
 Additional faces could be added. Useful tutorials for starting with Unity can be found on YouTube and on the Unity homepage.
 
-## References
+## Other Notes
 
-The asset [Ros2ForUnity_UbuntuGalactic.unitypackage](https://github.com/RobotecAI/ros2-for-unity/releases) from [ROS2-for-Unity](https://github.com/RobotecAI/ros2cs) provides an implementation of a ROS2 node in C# that can be added to the scene.
+This project is using a TCP connection instead of ROS 2.
+
+**It is also possible to include ROS 2:** The asset [Ros2ForUnity_UbuntuGalactic.unitypackage](https://github.com/RobotecAI/ros2-for-unity/releases) from [ROS2-for-Unity](https://github.com/RobotecAI/ros2cs) provides an implementation of a ROS2 node in C# that can be added to the scene. You need [ROS 2 Galactic](https://docs.ros.org/en/galactic/index.html) installed on your machine. This was tested with Ubuntu 20.04.
