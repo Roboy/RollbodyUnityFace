@@ -22,18 +22,26 @@ class TCPTestServer:
         self.host = host
         self.port = port
         self.socket = None
+        self.conn = None
 
-    def start(self):
-        print("here")
+    def start(self, restart_count=0):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             self.server.bind((self.host, self.port))
             self.server.listen()
+            print(f"Created server on host {self.host} and port {self.port}. Waiting for connection...")
             self.conn, addr = self.server.accept()
             print(f"Connected by {addr}")
         except socket.error as e:
+            n_retries = 20
             if e.errno == 48: # OSError: [Errno 48] Address already in use
-                print(f"Caught: {e}. Use different ports for the TCP client and server or wait if this worked before.")
+                if restart_count <= n_retries:
+                    print(f"Caught: {e}. Restarting ({restart_count}/{n_retries})")
+                    time.sleep(1)
+                    return self.start(restart_count+1)
+                else:
+                    print(f"Could not reconnect after {n_retries} retries. Try another port for the TCP client and server or restart both.")
+                    exit()
             else:
                 raise e
 
@@ -47,26 +55,19 @@ class TCPTestServer:
         # data = str(self.conn.recv(1024))    # blocks until msg is received
         # if not data:
         #     return False
-        # print("RECEIVED" + str(data))
         self.send_msg(**msg_dict)
         return True
 
-    def listen_for_incoming_requests(self):
-        pass
-
     def send_msg(self, head_roll=0., head_yaw=0., head_pitch=0., is_talking=False, emotion=""):
-        msg = {
-            "headRoll": float(head_roll),
-            "headYaw": float(head_yaw),
-            "headPitch": float(head_pitch),
-            "isTalking": is_talking,
-            "emotion": emotion,
-        }
-        print("sending: " + str(msg))
-        msg = json.dumps(msg).encode("utf-8")   # converts to bytes
+        msg = f"headRoll={head_roll};headYaw={head_yaw};headPitch={head_pitch};isTalking={is_talking};emotion={emotion}"
+        # print("sending: " + str(msg))
+        # msg = json.dumps(msg).encode("utf-8")   # converts to bytes
         try:
-            self.conn.sendall(msg)
+            self.conn.sendall(bytes(msg, encoding='utf8'))
         except socket.error as e:
+            if e.errno == 32:   # Broken pipe
+                print(f"Caught: {e}. Restarting TCP server.")
+                return self.start()
             print(f"Caught: {e}")
 
 
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     x, y, z = 0, 0, 0
     while True:
         # IMPORTANT: Set approiate FPS (too large -> TCP connection breaks)
-        clock.tick(2)
+        clock.tick(30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
