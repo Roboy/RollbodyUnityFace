@@ -8,6 +8,8 @@ Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace
 
 Use version 2021.3.8f1 (LTS) of the Unity Editor to avoid compatibility problems. Clone the repo and open it as a project in Unity. 
 
+You can also install the release `.apk` file to the Android tablet directly, e.g. with: `adb install RollbodyFaceSim.apk`.
+
 ## Connection for Voice and Head Movements
 
 The face simulation was deployed on an Android tablet to animate Rollbody's head. The lip movement in the Unity scene is according to the waveform of incoming microphone sound (read more about this in the **LipSync** section). You can input microphone sound to the tablet by connecting it to a Jetson Nano (audio cable) and configuring the tablet as a sound output device in Ubuntu on the Jetson Nano.
