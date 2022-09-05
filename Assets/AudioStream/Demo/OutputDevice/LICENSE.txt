@@ -1,0 +1,11 @@
+Sounds from freesound.org under these terms:
+
+262447__xinematix__action-percussion-ensemble-fast-4-170-bpm.wav
+Author: Xinematix ( https://freesound.org/people/Xinematix/ )
+Source: https://freesound.org/s/262447/
+License: Attribution 3.0 Unported (CC BY 3.0) ( https://creativecommons.org/licenses/by/3.0/ )
+
+429957__jack-master__fat-drum-loop-80-bpm-2.wav
+Author: Jack_Master ( https://freesound.org/people/Jack_Master/ )
+Source: https://freesound.org/s/429957/
+License: CC0 1.0 Universal (CC0 1.0) ( https://creativecommons.org/publicdomain/zero/1.0/ )

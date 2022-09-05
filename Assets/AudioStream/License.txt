@@ -1,0 +1,8 @@
+This asset is copyright (c) 2016-2020 Martin Cvengros. All rights reserved.
+Uses FMOD by Firelight Technologies Pty Ltd.
+
+By purchasing this asset on the Unity Asset Store, you gain the right to use it in products you create and distribute.
+You do not gain the right to share or publicize the source code of this asset.
+In other words - this is not open source; The source code and demo scenes may not be included in public repositories.
+
+See license details for each respective asset used where appropriate.

@@ -1,0 +1,17 @@
+------------------------------------------------------------
+NetMQ.Unity:
+https://www.nuget.org/packages/NetMQ.Unity/4.0.0.1
+by 
+https://www.nuget.org/profiles/emojingling
+has no license
+
+original
+https://github.com/zeromq/netmq
+GNU LESSER GENERAL PUBLIC LICENSE
+https://github.com/zeromq/netmq/blob/master/COPYING.LESSER
+------------------------------------------------------------
+AsyncIO:
+https://github.com/somdoron/AsyncIO
+Mozilla Public License 2.0
+https://github.com/somdoron/AsyncIO/blob/master/LICENSE.md
+------------------------------------------------------------

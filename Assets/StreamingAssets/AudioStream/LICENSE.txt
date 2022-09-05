@@ -1,0 +1,25 @@
+Sounds from freesound.org under these terms:
+
+429956__jack-master__fat-drum-loop-80-bpm-1.wav
+Author: Jack_Master ( https://freesound.org/people/Jack_Master/ )
+Source: https://freesound.org/s/429956/
+License: CC0 1.0 Universal (CC0 1.0) ( https://creativecommons.org/publicdomain/zero/1.0/ )
+
+429957__jack-master__fat-drum-loop-80-bpm-2.wav
+Author: Jack_Master ( https://freesound.org/people/Jack_Master/ )
+Source: https://freesound.org/s/429957/
+License: CC0 1.0 Universal (CC0 1.0) ( https://creativecommons.org/publicdomain/zero/1.0/ )
+
+electronic-senses-shibuya.mp3
+Shibuya by Electronic Senses | https://soundcloud.com/electronicsenses
+Music promoted by https://www.free-stock-music.com
+Creative Commons Attribution - ShareAlike 3.0 Unported
+https://creativecommons.org/licenses/by-sa/3.0/deed.en_US
+
+Leonard-Orfeo_Trio.wav
+Source: https://github.com/ambisonictoolkit/atk-sounds/blob/master/b-format/Leonard-Orfeo_Trio.wav
+Recording from https://github.com/ambisonictoolkit/atk-sounds, used according to license https://github.com/ambisonictoolkit/atk-sounds/blob/master/LICENSE.md therein.
+
+24ch_polywav_16bit_48k.wav
+Jon Olive of MagicBeans Physical Audio Ltd. https://www.magicbeans.xyz/
+kindly granted permission for free usage in the context of testing and demo-ing the audio file in the AudioStream asset
