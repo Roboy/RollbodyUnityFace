@@ -37,7 +37,7 @@ class TCPTestServer:
             if e.errno == 48: # OSError: [Errno 48] Address already in use
                 if restart_count <= n_retries:
                     print(f"Caught: {e}. Restarting ({restart_count}/{n_retries})")
-                    time.sleep(1)
+                    time.sleep(2)
                     return self.start(restart_count+1)
                 else:
                     print(f"Could not reconnect after {n_retries} retries. Try another port for the TCP client and server or restart both.")
@@ -58,8 +58,8 @@ class TCPTestServer:
         self.send_msg(**msg_dict)
         return True
 
-    def send_msg(self, head_roll=0., head_yaw=0., head_pitch=0., is_talking=False, emotion=""):
-        msg = f"headRoll={head_roll};headYaw={head_yaw};headPitch={head_pitch};isTalking={is_talking};emotion={emotion}"
+    def send_msg(self, head_roll=0., head_yaw=0., head_pitch=0., is_talking=False, is_present=False, emotion=""):
+        msg = f"headRoll={head_roll};headYaw={head_yaw};headPitch={head_pitch};isTalking={is_talking};isPresent={is_present};emotion={emotion}"
         # print("sending: " + str(msg))
         # msg = json.dumps(msg).encode("utf-8")   # converts to bytes
         try:
@@ -72,7 +72,9 @@ class TCPTestServer:
 
 
 if __name__ == '__main__':
+    # For testing purposes
 
+    #server = TCPTestServer("192.168.1.150")
     server = TCPTestServer()
     server.start()
 
@@ -84,6 +86,8 @@ if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
     x, y, z = 0, 0, 0
+    is_present = False
+    is_talking = False
     while True:
         # IMPORTANT: Set approiate FPS (too large -> TCP connection breaks)
         clock.tick(30)
@@ -99,9 +103,13 @@ if __name__ == '__main__':
         elif keys[pygame.K_y]:
             y = y + 1 if y + 1 < 360 else 0            
         elif keys[pygame.K_z]:
-            z = z + 1 if z + 1 < 360 else 0      
+            z = z + 1 if z + 1 < 360 else 0    
+        elif keys[pygame.K_p]:
+            is_present = not is_present
+        elif keys[pygame.K_t]:
+            is_talking = not is_talking
 
-        print(f"(x, y, z): ({x},{y},{z})")      
+        print(f"(x, y, z, is_present, is_talking): ({x},{y},{z},{is_present},{is_talking})")      
 
-        server.update(head_roll=x, head_yaw=y, head_pitch=z)
+        server.update(head_roll=x, head_yaw=y, head_pitch=z, is_present=is_present, is_talking=is_talking)
         
