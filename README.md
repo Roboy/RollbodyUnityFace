@@ -1,12 +1,14 @@
 # RollbodyUnityFace
 
-Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace) (`roboy3.0-dev` branch).
+Rollbody's facial expressions are animated in Unity. Based on [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace) (`roboy3.0-dev` branch).
 
 ![Demo](simulation_example.gif)
 
 ## Installation
 
 Use version 2021.3.8f1 (LTS) of the Unity Editor to avoid compatibility problems. Clone the repo and open it as a project in Unity. 
+
+You can also install the release `.apk` file to the Android tablet directly, e.g. with: `adb install RollbodyFaceSim.apk`.
 
 ## Connection for Voice and Head Movements
 
