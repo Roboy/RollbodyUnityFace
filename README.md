@@ -1,6 +1,6 @@
 # RollbodyUnityFace
 
-Rollbody's facial expressions are animated in Unity. Forked from [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace) (`roboy3.0-dev` branch).
+Rollbody's facial expressions are animated in Unity. Based on [RoboyUnityFace](https://github.com/Roboy/RoboyUnityFace) (`roboy3.0-dev` branch).
 
 ![Demo](simulation_example.gif)
 
